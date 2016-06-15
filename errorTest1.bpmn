@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_1" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Camunda Modeler" exporterVersion="1.0.0">
+  <bpmn:process id="ValidateSignatureErrorExample" name="Validate Signature Error Example" isExecutable="true" camunda:versionTag="1.0">
+    <bpmn:startEvent id="StartEvent_1" name="Submit Request with Signature">
+      <bpmn:extensionElements>
+        <camunda:formData>
+          <camunda:formField id="SignatureValidity" label="Is the Signature Valid?" type="boolean" />
+        </camunda:formData>
+      </bpmn:extensionElements>
+      <bpmn:outgoing>SequenceFlow_0kzpkvk</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_0kzpkvk" name="" sourceRef="StartEvent_1" targetRef="ScriptTask_08mjeq5" />
+    <bpmn:endEvent id="EndEvent_0quqr1f" name="End without error">
+      <bpmn:incoming>SequenceFlow_0fg9xw6</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1gecar2" sourceRef="ScriptTask_08mjeq5" targetRef="UserTask_1a5bg0v" />
+    <bpmn:scriptTask id="ScriptTask_08mjeq5" name="Validate Signature" scriptFormat="JavaScript" camunda:resultVariable="scriptOutput">
+      <bpmn:incoming>SequenceFlow_0kzpkvk</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1gecar2</bpmn:outgoing>
+      <bpmn:script><![CDATA[var sigValidity = execution.getVariable("SignatureValidity");
+if ( sigValidity == true ) {
+    execution.setVariable("SignatureAcceptedTF", true);
+} else if ( sigValidity == false) {
+  throw new org.camunda.bpm.engine.delegate.BpmnError("SignatureError", "There was a problem with the Signature.  The Signature is not valid");
+}]]></bpmn:script>
+    </bpmn:scriptTask>
+    <bpmn:sequenceFlow id="SequenceFlow_0fg9xw6" sourceRef="UserTask_1a5bg0v" targetRef="EndEvent_0quqr1f" />
+    <bpmn:sequenceFlow id="SequenceFlow_0e54qs2" sourceRef="myError" targetRef="UserTask_1q1ryiw" />
+    <bpmn:endEvent id="EndEvent_03ziwk4" name="End wth Error">
+      <bpmn:incoming>SequenceFlow_1u4sgtz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:sequenceFlow id="SequenceFlow_1u4sgtz" sourceRef="UserTask_1q1ryiw" targetRef="EndEvent_03ziwk4" />
+    <bpmn:boundaryEvent id="myError" name="Problem with Signature" attachedToRef="ScriptTask_08mjeq5">
+      <bpmn:outgoing>SequenceFlow_0e54qs2</bpmn:outgoing>
+      <bpmn:errorEventDefinition errorRef="Error_1fjkdyg" camunda:errorCodeVariable="errorCodeValue" />
+    </bpmn:boundaryEvent>
+    <bpmn:userTask id="UserTask_1a5bg0v" name="Process Request with Signature" camunda:assignee="demo">
+      <bpmn:incoming>SequenceFlow_1gecar2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_0fg9xw6</bpmn:outgoing>
+    </bpmn:userTask>
+    <bpmn:userTask id="UserTask_1q1ryiw" name="Review Signature" camunda:assignee="demo">
+      <bpmn:incoming>SequenceFlow_0e54qs2</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1u4sgtz</bpmn:outgoing>
+    </bpmn:userTask>
+  </bpmn:process>
+  <bpmn:error id="Error_1fjkdyg" name="Signature Error" errorCode="SignatureError" />
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="ValidateSignatureErrorExample">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="294" y="245" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="267" y="281" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0kzpkvk_di" bpmnElement="SequenceFlow_0kzpkvk">
+        <di:waypoint xsi:type="dc:Point" x="330" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="383" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="311.5" y="238" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_0quqr1f_di" bpmnElement="EndEvent_0quqr1f">
+        <dc:Bounds x="650" y="245" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="281" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1gecar2_di" bpmnElement="SequenceFlow_1gecar2">
+        <di:waypoint xsi:type="dc:Point" x="483" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="510" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="477.5" y="238" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ScriptTask_08mjeq5_di" bpmnElement="ScriptTask_08mjeq5">
+        <dc:Bounds x="383" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0fg9xw6_di" bpmnElement="SequenceFlow_0fg9xw6">
+        <di:waypoint xsi:type="dc:Point" x="610" y="263" />
+        <di:waypoint xsi:type="dc:Point" x="650" y="263" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="238" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_0e54qs2_di" bpmnElement="SequenceFlow_0e54qs2">
+        <di:waypoint xsi:type="dc:Point" x="483" y="321" />
+        <di:waypoint xsi:type="dc:Point" x="483" y="389" />
+        <di:waypoint xsi:type="dc:Point" x="510" y="389" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="453" y="345" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="EndEvent_03ziwk4_di" bpmnElement="EndEvent_03ziwk4">
+        <dc:Bounds x="650" y="371" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="623" y="407" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_1u4sgtz_di" bpmnElement="SequenceFlow_1u4sgtz">
+        <di:waypoint xsi:type="dc:Point" x="610" y="389" />
+        <di:waypoint xsi:type="dc:Point" x="650" y="389" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="585" y="364" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="BoundaryEvent_0t1jhdy_di" bpmnElement="myError">
+        <dc:Bounds x="465" y="285" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="402" y="321" width="90" height="20" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1a5bg0v_di" bpmnElement="UserTask_1a5bg0v">
+        <dc:Bounds x="510" y="223" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="UserTask_1q1ryiw_di" bpmnElement="UserTask_1q1ryiw">
+        <dc:Bounds x="510" y="349" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
